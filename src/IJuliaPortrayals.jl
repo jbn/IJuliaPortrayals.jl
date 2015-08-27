@@ -2,6 +2,7 @@ module IJuliaPortrayals
 
 import Base.writemime
 import Base.convert
+using Base.Base64: base64encode
 
 export FromFile
 export CSS, IncludeHTML, JavaScript, @JS_str, IFrame
