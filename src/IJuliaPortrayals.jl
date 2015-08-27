@@ -30,6 +30,19 @@ function embed(path, mime)
 end
 
 
+# Version 0.4.X seems to have HTML in base/docs/utils.jl
+# Version 0.3.X doesnt. 
+if !isdefined(:HTML)
+    export HTML
+
+    type HTML
+        doc::String
+    end
+
+    writemime(io::IO, ::MIME"text/html", html::HTML) = print(io, html.doc)
+end
+
+
 type IncludeHTML
     src::String
 end
