@@ -4,7 +4,7 @@ import Base.writemime
 import Base.convert
 
 export FromFile
-export CSS, IncludeHTML, Javascript, @JS_str, IFrame
+export CSS, IncludeHTML, JavaScript, @JS_str, IFrame
 export GIF, JPEG, PNG, SVG
 export OGG, MP3, WAV
 export YouTube, Vimeo
@@ -38,11 +38,11 @@ function writemime(io::IO, ::MIME"text/html", html::IncludeHTML)
     end
 end
 
-type Javascript
+type JavaScript
     code::String
 end
 
-function writemime(io::IO, ::MIME"text/html", javascript::Javascript)
+function writemime(io::IO, ::MIME"text/html", javascript::JavaScript)
     print(io, "<script>")
     print(io, javascript.code)
     print(io, "</script>")
