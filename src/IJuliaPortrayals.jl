@@ -219,4 +219,47 @@ function writemime(io::IO, ::MIME"text/html", wav::WAV)
     print(io, "</audio>")
 end
 
+
+# The GraphViz portrayal is experimental. There is an existing 
+# [GraphViz](https://github.com/Keno/GraphViz.jl). It implements a 
+# full-blown binding, rather than a reading and writing to a subprocess. 
+# But, I think this portrayal makes sense given the spirit of my package. 
+export GraphViz
+
+immutable GraphViz
+    dot::String
+    engine::String
+    image_type::String
+end
+
+function GraphViz(dot::String; engine="dot", image_type="svg") 
+    GraphViz(dot, engine, image_type)
+end
+
+const VALID_ENGINES = Set(["neato", "circo", "twopi", "sfdp", "fdp", "dot"])
+const VALID_IMAGE_TYPES = Set(["svg"])
+
+function build_command(gv::GraphViz)
+    gv.engine ∈ VALID_ENGINES || error("'$(gv.engine)' is not a valid layout")
+    gv.image_type ∈ VALID_IMAGE_TYPES || error("'$(gv.image_type)' is not a valid format")
+    
+    `dot -K$(gv.engine) -T$(gv.image_type)`
+end
+
+function writemime(io::IO, ::MIME"image/svg+xml", gv::GraphViz)
+    (gv_out, gv_in, gv_process) = readandwrite(build_command(gv))
+    
+    write(gv_in, gv.dot)
+    close(gv_in)
+    
+    emitted = readall(gv_out)
+    close(gv_out)
+    
+    if gv_process.exitcode == 0
+        print(io, emitted)
+    else
+        error("There was an error in your dot file syntax.")
+    end
+end
+
 end 
