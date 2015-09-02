@@ -22,11 +22,12 @@ function convert(::Type{String}, file::FromFile)
     end
 end
 
+function data_uri(data, mime)
+    string("data:", mime, ";base64,", base64encode(data))
+end
 
-function embed(path, mime)
-    open(path) do f
-        string("data:", mime, ";base64,", base64encode(readall(f)))
-    end
+embed(path, mime) = open(path) do f
+    data_uri(readall(f), mime)
 end
 
 
@@ -237,7 +238,7 @@ function GraphViz(dot::String; engine="dot", image_type="svg")
 end
 
 const VALID_ENGINES = Set(["neato", "circo", "twopi", "sfdp", "fdp", "dot"])
-const VALID_IMAGE_TYPES = Set(["svg"])
+const VALID_IMAGE_TYPES = Set(["svg", "png"])
 
 function build_command(gv::GraphViz)
     gv.engine ∈ VALID_ENGINES || error("'$(gv.engine)' is not a valid layout")
@@ -246,7 +247,7 @@ function build_command(gv::GraphViz)
     `dot -K$(gv.engine) -T$(gv.image_type)`
 end
 
-function writemime(io::IO, ::MIME"image/svg+xml", gv::GraphViz)
+function Base.writemime(io::IO, ::MIME"text/html", gv::GraphViz)
     (gv_out, gv_in, gv_process) = readandwrite(build_command(gv))
     
     write(gv_in, gv.dot)
@@ -256,7 +257,12 @@ function writemime(io::IO, ::MIME"image/svg+xml", gv::GraphViz)
     close(gv_out)
     
     if gv_process.exitcode == 0
-        print(io, emitted)
+        if(gv.image_type == "svg")
+            print(io, emitted)
+        else
+            data = data_uri(emitted, "image/png")
+            print(io, """<img src="$data" />""")
+        end
     else
         error("There was an error in your dot file syntax.")
     end
