@@ -112,9 +112,9 @@ type YouTube
     id::String
     width::Int
     height::Int
-    
-    YouTube(id) = new(id, 420, 315)
 end
+
+YouTube(id) = YouTube(id, 420, 315)
 
 function writemime(io::IO, ::MIME"text/html", youtube::YouTube)
     print(io, """
@@ -133,9 +133,10 @@ type Vimeo
     id::String
     width::Int
     height::Int
-    
-    Vimeo(id) = new(id, 500, 218)
 end
+
+Vimeo(id) = Vimeo(id, 500, 218)
+
 function writemime(io::IO, ::MIME"text/html", vimeo::Vimeo)
     print(io, """
         <iframe 
@@ -183,6 +184,7 @@ type MP3
     src::String
     embedded::Bool
 end
+
 MP3(src) = MP3(src, false)
 
 function writemime(io::IO, ::MIME"text/html", mp3::MP3)
@@ -197,6 +199,7 @@ type OGG
     src::String
     embedded::Bool
 end
+
 OGG(src) = MP3(src, false)
 
 function writemime(io::IO, ::MIME"text/html", ogg::OGG)
@@ -211,6 +214,7 @@ type WAV
     src::String
     embedded::Bool
 end
+
 WAV(src) = WAV(src, false)
 
 function writemime(io::IO, ::MIME"text/html", wav::WAV)
