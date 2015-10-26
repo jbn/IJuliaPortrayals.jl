@@ -13,17 +13,17 @@ export YouTube, Vimeo
 
 
 type FromFile
-    path::String
+    path::AbstractString
 end
 
-function convert(::Type{String}, file::FromFile)
+function convert(::Type{AbstractString}, file::FromFile)
     open(file.path) do f
         readall(f)
     end
 end
 
 function data_uri(data, mime)
-    string("data:", mime, ";base64,", base64encode(data))
+    AbstractString("data:", mime, ";base64,", base64encode(data))
 end
 
 embed(path, mime) = open(path) do f
@@ -37,7 +37,7 @@ if !isdefined(:HTML)
     export HTML
 
     type HTML
-        doc::String
+        doc::AbstractString
     end
 
     writemime(io::IO, ::MIME"text/html", html::HTML) = print(io, html.doc)
@@ -45,7 +45,7 @@ end
 
 
 type IncludeHTML
-    src::String
+    src::AbstractString
 end
 
 function writemime(io::IO, ::MIME"text/html", html::IncludeHTML) 
@@ -55,7 +55,7 @@ function writemime(io::IO, ::MIME"text/html", html::IncludeHTML)
 end
 
 type JavaScript
-    code::String
+    code::AbstractString
 end
 
 function writemime(io::IO, ::MIME"text/html", javascript::JavaScript)
@@ -72,7 +72,7 @@ end
 type IFrame
     width::Int
     height::Int
-    src::String
+    src::AbstractString
     border::Int
 end
 
@@ -91,7 +91,7 @@ end
 
 
 type CSS
-    doc::String
+    doc::AbstractString
 end
 
 function writemime(io::IO, ::MIME"text/html", css::CSS)
@@ -102,14 +102,14 @@ end
 
 
 type SVG
-    doc::String
+    doc::AbstractString
 end
 
 writemime(io::IO, ::MIME"image/svg+xml", svg::SVG) = print(io, svg.doc)
 
 
 type YouTube
-    id::String
+    id::AbstractString
     width::Int
     height::Int
 end
@@ -130,7 +130,7 @@ end
 
 
 type Vimeo
-    id::String
+    id::AbstractString
     width::Int
     height::Int
 end
@@ -153,7 +153,7 @@ end
 
 
 type PNG
-    src::String
+    src::AbstractString
 end
 
 writemime(io::IO, ::MIME"image/png", img::PNG) = open(img.src) do f
@@ -162,7 +162,7 @@ end
 
 
 type GIF
-    src::String
+    src::AbstractString
 end
 
 function writemime(io::IO, ::MIME"text/html", img::GIF)
@@ -172,7 +172,7 @@ end
 
 
 type JPEG
-    src::String
+    src::AbstractString
 end
 
 writemime(io::IO, ::MIME"image/jpeg", img::JPEG) = open(img.src) do f
@@ -181,7 +181,7 @@ end
 
 
 type MP3
-    src::String
+    src::AbstractString
     embedded::Bool
 end
 
@@ -196,7 +196,7 @@ end
 
 
 type OGG
-    src::String
+    src::AbstractString
     embedded::Bool
 end
 
@@ -211,7 +211,7 @@ end
 
 
 type WAV
-    src::String
+    src::AbstractString
     embedded::Bool
 end
 
@@ -232,12 +232,12 @@ end
 export GraphViz
 
 immutable GraphViz
-    dot::String
-    engine::String
-    image_type::String
+    dot::AbstractString
+    engine::AbstractString
+    image_type::AbstractString
 end
 
-function GraphViz(dot::String; engine="dot", image_type="svg") 
+function GraphViz(dot::AbstractString; engine="dot", image_type="svg") 
     GraphViz(dot, engine, image_type)
 end
 
